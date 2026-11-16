@@ -18,7 +18,8 @@ Reference for running local LLM inference servers on the Strix Halo 395 mini PC.
 **Run Qwen3.6-35B-A3B:**
 
 ```bash
-docker run -d --rm \
+# No reasoning
+docker run --name "llama-qwen36-35b-a3b" -d --rm \
   --memory="64g" \
   --memory-swap="64g" \
   --device=/dev/dri \
@@ -53,7 +54,7 @@ docker run -d --rm \
 **Run:**
 
 ```bash
-docker run -d --rm -p 8731:8731 \
+docker run --name "halogen-qwen38-fn" -d --rm -p 8731:8731 \
   --device /dev/kfd --device /dev/dri --group-add 44 --group-add 990 \
   --ipc=host --ulimit memlock=-1:-1 \
   -e HALOGEN_CHECKPOINT=/models/qwen38-flash-next-v2.hgn \
@@ -77,7 +78,7 @@ docker run -d --rm -p 8731:8731 \
 ### Qwen3.8-27B (with dflash2 speculative decoding)
 
 ```bash
-docker run -d --rm \
+docker run --name "gufo-qwen38-27b" -d --rm \
   -u 1000:1000 \
   --device /dev/kfd \
   --device /dev/dri \
@@ -95,7 +96,7 @@ docker run -d --rm \
 ### Qwen3.8-Flash-Next (with MTP speculative decoding)
 
 ```bash
-docker run -d --rm \
+docker run --name "gufo-qwen38-fn" -d --rm \
   -u 1000:1000 \
   --device /dev/kfd \
   --device /dev/dri \

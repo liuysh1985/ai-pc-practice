@@ -108,7 +108,9 @@ docker run --name "gufo-qwen38-fn" -d --rm \
   gufo serve --host 0.0.0.0 --port 8080 llm \
   --model /models/qwen38-flash-next/UD-Q4_K_XL/Qwen3.8-Flash-Next-UD-Q4_K_XL-00001-of-00004.gguf \
   --speculative mtp \
-  --mtp-model /models/qwen38-flash-next/MTP/mtp-Qwen3.8-Flash-Next-shared-Q8_0.gguf
+  --mtp-model /models/qwen38-flash-next/MTP/mtp-Qwen3.8-Flash-Next-shared-Q8_0.gguf \
+  --context 131072 \
+  --cache-ram-bytes 2147483648
 ```
 
 ### Muse Glimmer 30B

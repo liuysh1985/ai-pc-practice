@@ -34,7 +34,7 @@ Group IDs on the host: `video: 44`, `render: 990` (may vary per machine).
 
 ## OpenCode providers (opencode.jsonc)
 
-- `llama` → `192.168.34.66:58080` (default model: Qwen3.6-35B-A3B)
+- `llama` → `192.168.34.66:58081` (default model: Qwen3.6-35B-A3B)
 - `halogen` → `192.168.34.66:58731` (Qwen3.8 Flash Next)
 - `gufo` → `192.168.34.66:58080` (Qwen3.8 27B / Flash Next, reasoning models)
 
@@ -44,4 +44,4 @@ Group IDs on the host: `video: 44`, `render: 990` (may vary per machine).
 - **Desktop disabled by default** (`multi-user.target`). Start with `sudo systemctl start gdm3`.
 - **Docker needs device access:** `--device /dev/kfd --device /dev/dri --group-add 44 --group-add 990 --ulimit memlock=-1`.
 - **Model download from China:** use `hfd` (hf-mirror.com) alias, not `hf` directly.
-- **Docker Compose files:** none. All servers run via `docker run`.
+- **Docker Compose:** `servers/docker-compose.yml` + `servers/start-two.sh` run Qwen3.8-27B (gufo, :58080) and Qwen3.6-35B-A3B (llama.cpp, :58081) together. Single servers still run via `docker run`.

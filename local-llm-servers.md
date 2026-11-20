@@ -119,6 +119,29 @@ docker run --name "gufo-qwen38-fn" -d --rm \
 
 ---
 
+## Running two models together
+
+`servers/docker-compose.yml` + `servers/start-two.sh` run **Qwen3.8-27B (Gufo)** and **Qwen3.6-35B-A3B (llama.cpp)** at the same time. Both containers listen on 8080 internally; host ports are split:
+
+| Model | Server | Host port |
+|-------|--------|-----------|
+| Qwen3.8-27B | Gufo | 58080 |
+| Qwen3.6-35B-A3B | llama.cpp | 58081 |
+
+```bash
+cd servers
+./start-two.sh          # start both + wait for /health
+./start-two.sh status   # docker compose ps
+./start-two.sh logs     # follow logs
+./start-two.sh stop     # docker compose down
+```
+
+> ⚠️ The `llama` provider in `opencode.jsonc` must point at **58081** (not 58080) while both run, or it will hit Gufo's Qwen3.8-27B.
+
+Combined footprint is roughly 45–55 GB unified memory (Q4 weights + drafts + q8_0 KV cache) — fits the GTT setup (~110 GB `ttm.pages_limit`).
+
+---
+
 ## Quick comparison
 
 | Server | Port | Speculative | Best for |

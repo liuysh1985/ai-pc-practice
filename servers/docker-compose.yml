@@ -1,0 +1,59 @@
+# Run Qwen3.8-27B (Gufo) and Qwen3.6-35B-A3B (llama.cpp) together.
+#
+# Both servers listen on container port 8080; host ports differ:
+#   gufo  -> 58080   llama.cpp -> 58081
+#
+# Start with: ./start-two.sh  (see that script for stop/logs/status)
+
+name: two-models
+
+services:
+  gufo-qwen38-27b:
+    image: ghcr.io/gufo-org/toolboxes/gufo-runtime:0.34.0
+    container_name: gufo-qwen38-27b
+    user: "1000:1000"
+    devices:
+      - /dev/dri
+      - /dev/kfd
+    group_add:
+      - "44"   # video
+      - "990"  # render
+    ulimits:
+      memlock: -1
+    ports:
+      - "58080:8080"
+    volumes:
+      - ${HOME}/LLM_Practice/models:/models:ro
+    command: >
+      gufo serve --host 0.0.0.0 --port 8080 llm
+      --model /models/qwen38-27b/Qwen3.8-27B-UD-Q4_K_XL.gguf
+      --speculative dflash2
+      --dflash-model /models/qwen38-27b-dflash2/Qwen3.8-27B-DFlash2-Q4_K_M.gguf
+
+  llama-qwen36-35b-a3b:
+    image: ghcr.io/ggml-org/llama.cpp:server-vulkan
+    container_name: llama-qwen36-35b-a3b
+    devices:
+      - /dev/dri
+    group_add:
+      - "44"   # video
+      - "990"  # render
+    ports:
+      - "58081:8080"
+    volumes:
+      - ${HOME}/LLM_Practice/models/qwen36-35b-a3b:/models:ro
+    mem_limit: 64g
+    # equal to mem_limit => no swap, same as --memory-swap=64g
+    memswap_limit: 64g
+    command: >
+      -m /models/Qwen3.6-35B-A3B-UD-Q4_K_XL.gguf
+      --alias Qwen3.6-35B-A3B
+      --reasoning-budget 0
+      -ngl 99
+      -fa on
+      -c 65536
+      -ctk q8_0 -ctv q8_0
+      --spec-type draft-mtp
+      --spec-draft-n-max 2
+      --temp 0.6 --top-p 0.95 --top-k 20 --min-p 0.0
+      --host 0.0.0.0 --port 8080
